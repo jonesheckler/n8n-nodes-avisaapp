@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-avisaapp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Integração com o Avisa App para envio de mensagens via WhatsApp",
   "keywords": [
     "n8n-community-node-package",
