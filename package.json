@@ -1,0 +1,64 @@
+{
+  "name": "@avisaapp/n8n-nodes-avisaapp",
+  "version": "0.1.0",
+  "description": "Integração com o Avisa App para envio de mensagens via WhatsApp",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "n8n-node",
+    "whatsapp",
+    "avisaapp",
+    "messaging"
+  ],
+  "license": "MIT",
+  "homepage": "https://www.avisaapp.com.br",
+  "author": {
+    "name": "Jones Heckler",
+    "email": "jones@avisaapp.com.br"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonesheckler/n8n-nodes-avisaapp.git"
+  },
+  "engines": {
+    "node": ">=18.10",
+    "pnpm": ">=9.1"
+  },
+  "packageManager": "pnpm@9.1.4",
+  "main": "index.js",
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "pnpm build && pnpm lint -c .eslintrc.prepublish.js nodes credentials package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/AvisaApp.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/AvisaApp/AvisaApp.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^18.19.3",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.56.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.1",
+    "gulp": "^4.0.2",
+    "prettier": "^3.1.1",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "n8n-core": "^1.0.0",
+    "n8n-workflow": "^1.0.0"
+  }
+}

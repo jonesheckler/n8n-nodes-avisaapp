@@ -1,0 +1,1312 @@
+{
+	"info": {
+		"_postman_id": "7dfb2f1e-bd76-45e0-a911-863458737ca6",
+		"name": "Avisa APP",
+		"description": "API de integração do [www.avisaapp.com.br](http://www.avisaapp.com.br)\n\nVerifique junto ao suporte se sua conta tem acesso a API - [Whatsapp](https://wa.me/5551998875907?text=Acesso+a+API+do+Avisa+App)\n\nInicie a conexão ou pelo painel do Avisa App ou user a API InstanceController->Get QR\n\n---\n\nPara enviar sua primeira mensagem:\n\nSendMessageController->Send Text Message\n\n---\n\nPara configura o webhook use o WebhookController\n\n- para atualizar o endereço, basta enviar o novo\n    \n- para desativar, basta enviar o campo em branco (\"\")\n    \n\n---\n\nINTEGRADOR - Forneça acesso para seus clientes\n\n---\n\nSe for um Integrador e irá gerar suas próprias instáncias de conexão siga os passos:\n\n1- Solicite o Token de integração\n\n2- Crie um novo usuário usando a api IntegratorController->New User\n\n3-Com o token de retorno, gere o QRcode para conectar sua nova instancia chamando InstanceController->Get QR Code For Sanning\n\n4- Verifique se sua conexão realizou o login InstanceController->IntanceI Info no parâmetro LoggedIn (true)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "178107",
+		"_collection_link": "https://www.postman.com/mw10/workspace/avisa-app/collection/178107-7dfb2f1e-bd76-45e0-a911-863458737ca6?action=share&source=collection_link&creator=178107"
+	},
+	"item": [
+		{
+			"name": "V2",
+			"item": [
+				{
+					"name": "SendMessageController",
+					"item": [
+						{
+							"name": "Send Base 64",
+							"item": [
+								{
+									"name": "Send Document - Base64",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{seutoken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"number\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"document\": \"JVBERi0xLjQNCiWhs8XXDQoxIDAgb2JqDQo8PC9DcmVhdGlvbkRhdGUoRDoyMDI0MDkzMDEyNDM1NSswMCcwMCcp\", // base 64 do seu documento\r\n    \"fileName\": \"teste.pdf\",\r\n    \"caption\": \"Segue meu arquivo\"\r\n\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseurl}}/v2/actions/sendDocument",
+											"host": [
+												"{{baseurl}}"
+											],
+											"path": [
+												"v2",
+												"actions",
+												"sendDocument"
+											]
+										},
+										"description": "Send message to someone."
+									},
+									"response": []
+								},
+								{
+									"name": "Send Image - Base64",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{seutoken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"number\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"image\": \"iVBORw0KGgoAAAANSUhEUgAABNIAAADqCAYAAABnaWgAAAAAAXNSR0IArs4c6QAAAGJlWElmTU0AKg\", // base 64 da sua imagem\r\n    \"caption\": \"Segue minha imagem\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseurl}}/v2/actions/sendImage",
+											"host": [
+												"{{baseurl}}"
+											],
+											"path": [
+												"v2",
+												"actions",
+												"sendImage"
+											]
+										},
+										"description": "Send message to someone."
+									},
+									"response": []
+								},
+								{
+									"name": "Send Audio - Base64",
+									"request": {
+										"auth": {
+											"type": "bearer",
+											"bearer": [
+												{
+													"key": "token",
+													"value": "{{seutoken}}",
+													"type": "string"
+												}
+											]
+										},
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"number\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"audio\": \"T2dnUwACAAAAAAAAAABkAAAAAAAAADI5MFABE09wdXNIZWFkAQE4AYA+AAAAAABPZ2dTA\", // base 64 do seu audio\r\n    \"duration\": 130 // em segundos\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseurl}}/v2/actions/sendAudio",
+											"host": [
+												"{{baseurl}}"
+											],
+											"path": [
+												"v2",
+												"actions",
+												"sendAudio"
+											]
+										},
+										"description": "Send message to someone."
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Send Text Message",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"54991777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"mensagem\": \"Original Olá João da Silva seja bem vindo ao nosso sistema de envio de mensagens recorrentes via whatsapp 💬 o Avisa APP. Entre no menu Conta -> Instância para começar a enviar mensagens🥳. \\n\\n*Notificação enviada via avisaapp.com.br* \\n\\n Notificações agendadas e simples via Whatsapp.\"\r\n\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/sendMessage",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"sendMessage"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Edit Text Message",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"mensagem\": \"EDIT OK\", // novo texto\r\n    \"id\": \"3EB0C8B98EC24F03EB8C5B\"  // id a mensagem enviada\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/editMessage",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"editMessage"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Text Message",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"id\": \"3EB0EBDAC7AF5063B9E849\" // id a mensagem enviada\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/deleteMessage",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"deleteMessage"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Text Message International",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"+555491777547\", // Envie o numero completo do telefone internacional\r\n    \"mensagem\": \"Olá Joõa da Silva seja bem vindo ao nosso sistema de envio de mensagens recorrentes via whatsapp 💬 o Avisa APP. Entre no menu Conta -> Instância para começar a enviar mensagens🥳. \\n\\n*Notificação enviada via avisaapp.com.br* \\n\\n Notificações agendadas e simples via Whatsapp.\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/sendMessageInternational",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"sendMessageInternational"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Media",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"54991777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"urlFile\": \"https://www.avisaapp.com.br/site/oficial/logo.png\", // url do arquivo que deseja enviar\r\n    // \"urlFile\": \"https://www.avisaapp.com.br/site/oficial/teste.ogg\" // teste de audio\r\n    \"type\": \"image\", // \"image,video,audio,document\"\r\n    \"fileName\": \"Logo Avisa App.png\", // nome do arquivo\r\n    \"mensagem\": \"Olá João da Silva seja bem vindo ao nosso sistema de envio de mensagens recorrentes via whatsapp 💬 o Avisa APP. Entre no menu Conta -> Instância para começar a enviar mensagens🥳. \\n\\n*Notificação enviada via avisaapp.com.br* \\n\\n Notificações agendadas e simples via Whatsapp.\"\r\n    \r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/sendMedia",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"sendMedia"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Preview",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"5491777547\", // Se for informado o JID, envia sem validação, Caso informe o número o mesmo será validado antes do envio.\r\n    \"mensagem\": \"Olá João da Silva seja bem vindo ao nosso sistema de envio de mensagens recorrentes via whatsapp 💬 o Avisa APP. Entre no menu Conta -> Instância para começar a enviar mensagens🥳. \\n\\n*Notificação enviada via https://www.avisaapp.com.br* \\n\\n Notificações agendadas e simples via Whatsapp.\", // deve conter a url\r\n    \"urlSite\": \"https://www.avisaapp.com.br\", // url do site que deseja enviar\r\n    \"description\": \"Seu agendamento via whatsapp\", // Description of the preview message\r\n    \"title\": \"Título do Link\", // Title of the preview message\r\n    \"image\": \"data:image/png;base64,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\" // data:image/jpeg;base64,Akd9300...\r\n    \r\n    \r\n    \r\n}\r\n\r\n// 'Phone'      => $numero,\r\n//             'Text'      => $mensagem,\r\n//             'MatchedURL' => $urlFile,\r\n//             'Description'     => $type, //\"image,video,audio,document\"\r\n//             'Title'  => $caption,\r\n//             'Image' => $fileName,",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/sendPreview",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"sendPreview"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Check Number",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"numero\": \"5491777547\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/checknumber",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"checknumber"
+									]
+								},
+								"description": "Send message to someone."
+							},
+							"response": []
+						},
+						{
+							"name": "Send Message KEY",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/actions/sendMessage?phone=5554991777547&text=This+is+a+test&apikey=4081685",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"actions",
+										"sendMessage"
+									],
+									"query": [
+										{
+											"key": "phone",
+											"value": "5554991777547"
+										},
+										{
+											"key": "text",
+											"value": "This+is+a+test"
+										},
+										{
+											"key": "apikey",
+											"value": "4081685"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "InstanceController",
+					"item": [
+						{
+							"name": "Get QR code for scanning",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseurl}}/v2/instance/qr",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"instance",
+										"qr"
+									]
+								},
+								"description": "Gets QR code if the user is connected but not logged in. If the user is already logged in, QRCode will be empty."
+							},
+							"response": [
+								{
+									"name": "Response",
+									"originalRequest": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "token",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"url": {
+											"raw": "{{baseUrl}}/session/qr",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"session",
+												"qr"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"example\": {\n    \"code\": 200,\n    \"data\": {\n      \"QRCode\": \"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEAAQMAAABmvDolAAAABlBMVEX///8AAABVwtN+AAAEw0lEQVR42uyZPa7zqhaGX0ThLmsCkZlGCktMKaU76FxmSkgUmQZWJkA6CuT3avlLvrNvvRMX9x6KXWQ/UhCsn2cR/Lv+v5YhudQ6njEs1bBjqGYDwlJJpoOAArtUbK4Pi5jN3qPAlCkstcAeBazMUaoj78RpxGW4yWYzWVfmzwFLlLX4O+VkkucN5tFDOxiIAvfoA/X4uVQ4sgUcCBTYCG7AEGGKvbdrBabQ8OOyvg3ovm4ynqfLXJ9rvi+303ie5vm/gvZXgK6BLC7fo5hiG4KwW7b6I/2+DJi1+ybVFQyx6o6bbKPVDCyjTwcBZB9uevBtAEafhiosCFH/4kNA8i1gg02B3KxezGbzEjUCDgIwYppR3SNdgtY3H0M1j8xFzCscvg/8uQvZAB9piidv1RXfZhbHdAwAlzsCNCaJDdMF4WQeeSGACZ8BMNl4FZYJA7j2YalPPhhngetHAaZPcyBg2wyYdAk0fKQ5yPja5PcBzTZW4uxJ2bTGwmxnu/BH4vwSgEsYItcCH+VZJt/AYhmHatbXdX8d2JvaTVzxCVW2aVhqheXSqvnR9b4L6AoUx3zX+jZd5rDB5jbLuv0txd8GRs+liuv+TsKloQWujxxRYf5s8gOA7fMVK9PQuDtMNCx2ibIdCMCy1s0yQU6Od9bqim1BuzoOAgzTHOiKv0d5Mt+XClN8DBxN/wxg2G2DbDYNJExCqE+Ne8poXoLxdUA/w5VrnxBQ9fjlqaJMwWgPAzLjtfKRW4A21ojnStX0dX2d5PeB0fawu2pChcuM4bk+tLmbMn0GMJslb5ptDXySbb5W1+0SyVcJOgRIQxSc7X0RUSvGs2DSeaz4gwCMNi/7XNACZc0KbPBtruv2KQA+DVFladBvt4xywhmh1Xd2fx8wzGTUltqCWrHWgqL7Jg8E0hSiFJfbUJ/Fpx3L1OHsVR8+APgoZMclUKvcft2+zTBrwjHArosim4ZcfW4Y4lVWnYXg2A8C9C5aEFXDoEJzmXFyfZoH/p0Wvw7oXoZbNQ823ase1wk2DQ3u7XK/BkzOqovwpM68Ko+jUyPFu6F8H4DvqsAuaUMZJ6+azjTPdS32KMBkLnpQ3VPnbsZgiktALW91/wDQEV5V7gT4JT6L62GRzeV0EDDC7rVFax2ZW6Aa6V5h/FEAgBlSbLrMVScU1s09+jxwG/9q87cB/Yxw3acBsk2Yw+nPf9Y1p88ARlNPtvPkF3LlPQYp8MtSx/FtpF8H4DNrZd8fOtTOxJSzXdo/c/fXAbN2DLeKs1dxHeEZZVWaju/3h18CcDk3qePZpllglDZ89MCq8nIQoDPAVaPi3iAFFwS1xjjr+HcYwD+hri216vBZzQbbZsE44RhAp+sQxfTpApGCoV1NOfsl4pX+nwC65a1uLnkK9TSuVTOhaQ4cBOzvtDcZXU5Bdl28SrF9HqrZJhwD7O/VsZpi7xSz7pXW6ahQ1/dB/RrYf2QhLBmr1lNINVRZfw9BBwArc4SszGlWWd2fxB9cFvJQYKnUUWAgV22y5v1e/ffHpiOAqMLCiOpymwNGtxvk9s8mfwcU2CiydqvJbdKuSX0K8a/KHQDsMQkyeVbtISFif8mRcfwRtF8F/l3/O+s/AQAA///lM0dZSaTeTQAAAABJRU5ErkJggg==\"\n    },\n    \"success\": true\n  }\n}"
+								}
+							]
+						},
+						{
+							"name": "Instance Info",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<style type=\"text/css\">",
+											"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+											"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+											"    .tftable tr {background-color:#ffffff;}",
+											"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+											"    .tftable tr:hover {background-color:#e0ffff;}",
+											"</style>",
+											"",
+											"<table class=\"tftable\" border=\"1\">",
+											"    <tr>",
+											"        <th>PHP Version</th>",
+											"        <th>Request Duration</th>",
+											"        <th>Memory Usage</th>",
+											"        <th>Route</th>",
+											"        <th>Queries</th>",
+											"        <th>Models</th>",
+											"        <th>Session</th>",
+											"        <th>Request</th>",
+											"    </tr>",
+											"    <tr>",
+											"        <td>{{response.php.version}}</td>",
+											"        <td>{{response.time.duration_str}}</td>",
+											"        <td>{{response.memory.peak_usage_str}}</td>",
+											"        <td>{{response.route.uri}}</td>",
+											"        <td>{{response.queries.nb_statements}}</td>",
+											"        <td>{{response.models.count}}</td>",
+											"        <td>{{response.session._token}}</td>",
+											"        <td>{{response.request.path_info}}</td>",
+											"    </tr>",
+											"</table>",
+											"`;",
+											"",
+											"function constructVisualizerPayload() {",
+											"    var visualizerData = pm.response.json();",
+											"    ",
+											"    return {response: visualizerData};",
+											"}",
+											"",
+											"pm.visualizer.set(template, constructVisualizerPayload());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/instance/status",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"instance",
+										"status"
+									]
+								},
+								"description": "Get session status. The status value is either `authenticated, connecting, connected, disconnecting` or `disconnected`."
+							},
+							"response": [
+								{
+									"name": "Response Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/rest/instance/status/{{seutoken}}",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"rest",
+												"instance",
+												"status",
+												"{{seutoken}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "63"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"3f-RGosI+9nNJliG+uza0vX9GICMuE\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 10 Apr 2022 10:20:48 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [
+										{
+											"expires": "Invalid Date",
+											"domain": "",
+											"path": ""
+										}
+									],
+									"body": "{\n    \"success\": true,\n    \"message\": \"authenticated\",\n    \"data\": {\n        \"status\": \"authenticated\"\n        \"phone\": \"+55 11 91287-9569\"\n        \"name\": \"Empresax\"\n        \"photoUrl\": \"urlphoto\"\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Instance",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<style type=\"text/css\">",
+											"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+											"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+											"    .tftable tr {background-color:#ffffff;}",
+											"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+											"    .tftable tr:hover {background-color:#e0ffff;}",
+											"</style>",
+											"",
+											"<table class=\"tftable\" border=\"1\">",
+											"    <tr>",
+											"        <th>PHP Version</th>",
+											"        <th>Request Duration</th>",
+											"        <th>Memory Usage</th>",
+											"        <th>Route</th>",
+											"        <th>Queries</th>",
+											"        <th>Models</th>",
+											"        <th>Session</th>",
+											"        <th>Request</th>",
+											"    </tr>",
+											"    <tr>",
+											"        <td>{{response.php.version}}</td>",
+											"        <td>{{response.time.duration_str}}</td>",
+											"        <td>{{response.memory.peak_usage_str}}</td>",
+											"        <td>{{response.route.uri}}</td>",
+											"        <td>{{response.queries.nb_statements}}</td>",
+											"        <td>{{response.models.count}}</td>",
+											"        <td>{{response.session._token}}</td>",
+											"        <td>{{response.request.path_info}}</td>",
+											"    </tr>",
+											"</table>",
+											"`;",
+											"",
+											"function constructVisualizerPayload() {",
+											"    var visualizerData = pm.response.json();",
+											"    ",
+											"    return {response: visualizerData};",
+											"}",
+											"",
+											"pm.visualizer.set(template, constructVisualizerPayload());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/instance/user",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"instance",
+										"user"
+									]
+								},
+								"description": "Get session status. The status value is either `authenticated, connecting, connected, disconnecting` or `disconnected`."
+							},
+							"response": [
+								{
+									"name": "delete instance",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseurl}}/v2/instance/user",
+											"host": [
+												"{{baseurl}}"
+											],
+											"path": [
+												"v2",
+												"instance",
+												"user"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Host",
+											"value": "localhost"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 27 Sep 2024 23:02:14 GMT"
+										},
+										{
+											"key": "Date",
+											"value": "Fri, 27 Sep 2024 23:02:14 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "close"
+										},
+										{
+											"key": "X-Powered-By",
+											"value": "PHP/8.1.21"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, private"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "X-TREBLLE-TRACE-ID",
+											"value": "4ab80379-29c3-49f8-8208-0a2371ec42fa"
+										},
+										{
+											"key": "X-RateLimit-Limit",
+											"value": "60"
+										},
+										{
+											"key": "X-RateLimit-Remaining",
+											"value": "59"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"success\": true,\n    \"message\": \"Sessão finalizada com sucesso.\"\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "IntegratorController",
+					"item": [
+						{
+							"name": "Get All Users",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<style type=\"text/css\">",
+											"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+											"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+											"    .tftable tr {background-color:#ffffff;}",
+											"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+											"    .tftable tr:hover {background-color:#e0ffff;}",
+											"</style>",
+											"",
+											"<table class=\"tftable\" border=\"1\">",
+											"    <tr>",
+											"        <th>PHP Version</th>",
+											"        <th>Request Duration</th>",
+											"        <th>Memory Usage</th>",
+											"        <th>Route</th>",
+											"        <th>Queries</th>",
+											"        <th>Models</th>",
+											"        <th>Session</th>",
+											"        <th>Request</th>",
+											"    </tr>",
+											"    <tr>",
+											"        <td>{{response.php.version}}</td>",
+											"        <td>{{response.time.duration_str}}</td>",
+											"        <td>{{response.memory.peak_usage_str}}</td>",
+											"        <td>{{response.route.uri}}</td>",
+											"        <td>{{response.queries.nb_statements}}</td>",
+											"        <td>{{response.models.count}}</td>",
+											"        <td>{{response.session._token}}</td>",
+											"        <td>{{response.request.path_info}}</td>",
+											"    </tr>",
+											"</table>",
+											"`;",
+											"",
+											"function constructVisualizerPayload() {",
+											"    var visualizerData = pm.response.json();",
+											"    ",
+											"    return {response: visualizerData};",
+											"}",
+											"",
+											"pm.visualizer.set(template, constructVisualizerPayload());"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{integratorToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/instance/getAll",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"instance",
+										"getAll"
+									]
+								},
+								"description": "Get session status. The status value is either `authenticated, connecting, connected, disconnecting` or `disconnected`."
+							},
+							"response": [
+								{
+									"name": "Response Success",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/rest/instance/status/{{seutoken}}",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"rest",
+												"instance",
+												"status",
+												"{{seutoken}}"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "63"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"3f-RGosI+9nNJliG+uza0vX9GICMuE\""
+										},
+										{
+											"key": "Date",
+											"value": "Sun, 10 Apr 2022 10:20:48 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [
+										{
+											"expires": "Invalid Date",
+											"domain": "",
+											"path": ""
+										}
+									],
+									"body": "{\n    \"success\": true,\n    \"message\": \"authenticated\",\n    \"data\": {\n        \"status\": \"authenticated\"\n        \"phone\": \"+55 11 91287-9569\"\n        \"name\": \"Empresax\"\n        \"photoUrl\": \"urlphoto\"\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "New User",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{integratorToken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Jones integrador\",\n  \"email\": \"jones.heckler@gmail.com\"\n}",
+									"options": {
+										"raw": {
+											"headerFamily": "json",
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/instance/createUser",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"instance",
+										"createUser"
+									]
+								},
+								"description": "Create a new user to login into instance"
+							},
+							"response": [
+								{
+									"name": "Response",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "admintoken",
+												"value": "",
+												"description": "(Required) "
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json"
+											},
+											{
+												"key": "Accept",
+												"value": "application/json"
+											},
+											{
+												"key": "token",
+												"value": "<API Key>",
+												"description": "Added as a part of security scheme: apikey"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"value\": \"reference #definitions/InitUser not found in the OpenAPI spec\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/session/init",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"session",
+												"init"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"example\": {\n    \"code\": 200,\n    \"data\": {\n      \"details\": \"user created successfully\",\n      \"name\": \"customer1\",\n      \"token\": \"veryhardtoken\"\n    },\n    \"success\": true\n  }\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "GroupController",
+					"item": [
+						{
+							"name": "List subscribed groups",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var template = `",
+											"<style type=\"text/css\">",
+											"    .tftable {font-size:14px;color:#333333;width:100%;border-width: 1px;border-color: #87ceeb;border-collapse: collapse;}",
+											"    .tftable th {font-size:18px;background-color:#87ceeb;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;text-align:left;}",
+											"    .tftable tr {background-color:#ffffff;}",
+											"    .tftable td {font-size:14px;border-width: 1px;padding: 8px;border-style: solid;border-color: #87ceeb;}",
+											"    .tftable tr:hover {background-color:#e0ffff;}",
+											"</style>",
+											"",
+											"<table class=\"tftable\" border=\"1\">",
+											"    <tr>",
+											"        <th>PHP Version</th>",
+											"        <th>Request Duration</th>",
+											"        <th>Memory Usage</th>",
+											"        <th>Route</th>",
+											"        <th>Queries</th>",
+											"        <th>Models</th>",
+											"        <th>Session</th>",
+											"        <th>Request</th>",
+											"    </tr>",
+											"    <tr>",
+											"        <td>{{response.php.version}}</td>",
+											"        <td>{{response.time.duration_str}}</td>",
+											"        <td>{{response.memory.peak_usage_str}}</td>",
+											"        <td>{{response.route.uri}}</td>",
+											"        <td>{{response.queries.nb_statements}}</td>",
+											"        <td>{{response.models.count}}</td>",
+											"        <td>{{response.session._token}}</td>",
+											"        <td>{{response.request.path_info}}</td>",
+											"    </tr>",
+											"</table>",
+											"`;",
+											"",
+											"function constructVisualizerPayload() {",
+											"    var visualizerData = pm.response.json();",
+											"    ",
+											"    return {response: visualizerData};",
+											"}",
+											"",
+											"pm.visualizer.set(template, constructVisualizerPayload());"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/group/list",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"group",
+										"list"
+									]
+								},
+								"description": "Get session status. The status value is either `authenticated, connecting, connected, disconnecting` or `disconnected`."
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "WebhookController",
+					"item": [
+						{
+							"name": "Show Webhook",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{baseurl}}/v2/webhook",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"webhook"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Set Webhook",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{seutoken}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"webhook\": \"http://www.avisaapp.com.br/seu-webhook\" // para remover enviar vazio ou alterar enviar o novo\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseurl}}/v2/webhook",
+									"host": [
+										"{{baseurl}}"
+									],
+									"path": [
+										"v2",
+										"webhook"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
