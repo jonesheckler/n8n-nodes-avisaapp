@@ -4,7 +4,6 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
-	NodeConnectionType,
 } from 'n8n-workflow';
 
 export class AvisaApp implements INodeType {
@@ -19,15 +18,11 @@ export class AvisaApp implements INodeType {
 		defaults: {
 			name: 'Avisa App',
 		},
-		inputs: [{
-			type: NodeConnectionType.Main,
-		}],
-		outputs: [{
-			type: NodeConnectionType.Main,
-		}],
+		inputs: ['main'],
+		outputs: ['main'],
 		credentials: [
 			{
-				name: 'avisaApp',
+				name: 'avisaAppApi',
 				required: true,
 			},
 		],
@@ -197,7 +192,7 @@ export class AvisaApp implements INodeType {
 		const returnData: IDataObject[] = [];
 		const resource = this.getNodeParameter('resource', 0) as string;
 		const operation = this.getNodeParameter('operation', 0) as string;
-		const credentials = await this.getCredentials('avisaApp') as { apiToken: string; baseUrl: string };
+		const credentials = await this.getCredentials('avisaAppApi') as { apiToken: string; baseUrl: string };
 
 		// Ensure baseUrl doesn't end with a slash
 		const baseUrl = credentials.baseUrl.replace(/\/$/, '');

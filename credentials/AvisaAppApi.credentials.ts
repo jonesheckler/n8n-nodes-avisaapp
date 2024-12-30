@@ -4,8 +4,8 @@ import {
 	INodeProperties,
 } from 'n8n-workflow';
 
-export class AvisaApp implements ICredentialType {
-	name = 'avisaApp';
+export class AvisaAppApi implements ICredentialType {
+	name = 'avisaAppApi';
 	displayName = 'Avisa App API';
 	documentationUrl = 'https://www.avisaapp.com.br';
 	properties: INodeProperties[] = [
