@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-avisaapp",
-  "version": "0.1.1",
+  "version": "0.1.6",
   "description": "Integração com o Avisa App para envio de mensagens via WhatsApp",
   "keywords": [
     "n8n-community-node-package",
@@ -21,7 +21,7 @@
     "url": "git+https://github.com/jonesheckler/n8n-nodes-avisaapp.git"
   },
   "engines": {
-    "node": ">=18.10"
+    "node": ">=20.17.0"
   },
   "main": "dist/nodes/AvisaApp/AvisaApp.node.js",
   "scripts": {

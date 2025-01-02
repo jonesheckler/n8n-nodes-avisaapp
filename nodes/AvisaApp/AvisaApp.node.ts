@@ -14,7 +14,7 @@ export class AvisaApp implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Avisa App API',
+		description: 'Integration with Avisa App API',
 		defaults: {
 			name: 'Avisa App',
 		},
@@ -36,6 +36,10 @@ export class AvisaApp implements INodeType {
 					{
 						name: 'Message',
 						value: 'message',
+					},
+					{
+						name: 'Contact',
+						value: 'contact',
 					},
 				],
 				default: 'message',
@@ -75,6 +79,28 @@ export class AvisaApp implements INodeType {
 				default: 'sendText',
 			},
 			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'contact',
+						],
+					},
+				},
+				options: [
+					{
+						name: 'Check Number',
+						value: 'checkNumber',
+						description: 'Check if a number is registered on WhatsApp',
+						action: 'Check if a number is registered on whatsapp',
+					},
+				],
+				default: 'checkNumber',
+			},
+			{
 				displayName: 'Phone Number',
 				name: 'numero',
 				type: 'string',
@@ -93,6 +119,24 @@ export class AvisaApp implements INodeType {
 					},
 				},
 				description: 'Phone number in international format',
+			},
+			{
+				displayName: 'Phone Number',
+				name: 'numero',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'contact',
+						],
+						operation: [
+							'checkNumber',
+						],
+					},
+				},
+				description: 'Phone number in international format to check',
 			},
 			{
 				displayName: 'Message',
@@ -128,7 +172,7 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Base64 encoded document',
+				description: 'Document encoded in Base64',
 			},
 			{
 				displayName: 'File Name',
@@ -164,7 +208,7 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Caption for the document or image',
+				description: 'Caption for document or image',
 			},
 			{
 				displayName: 'Image',
@@ -182,7 +226,7 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Base64 encoded image',
+				description: 'Image encoded in Base64',
 			},
 		],
 	};
@@ -301,6 +345,62 @@ export class AvisaApp implements INodeType {
 						console.log('Response:', JSON.stringify(response));
 
 						returnData.push(response as IDataObject);
+					}
+				}
+				else if (resource === 'contact') {
+					if (operation === 'checkNumber') {
+						const numero = this.getNodeParameter('numero', i) as string;
+
+						const body = {
+							numero,
+						};
+
+						const url = `${baseUrl}/actions/checknumberinternational`;
+						console.log('Making request to:', url);
+						console.log('Request body:', JSON.stringify(body));
+
+						// Format the authorization header
+						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+						console.log('Authorization header:', authHeader);
+
+						try {
+							const response = await this.helpers.httpRequest({
+								method: 'POST',
+								url,
+								body,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+							});
+
+							console.log('Response:', JSON.stringify(response));
+							returnData.push({
+								success: true,
+								isWhatsAppNumber: true,
+								...response,
+							} as IDataObject);
+						} catch (error) {
+							// For status code 400, we treat it as a valid response indicating the number is not a WhatsApp number
+							if (error.response && error.response.statusCode === 400) {
+								console.log('Invalid WhatsApp number response:', JSON.stringify(error.response.body));
+								returnData.push({
+									success: true, // We mark as success because this is an expected response
+									isWhatsAppNumber: false,
+									statusCode: 400,
+									...error.response.body,
+								} as IDataObject);
+							} else {
+								// For other errors, we treat them as actual errors
+								console.log('Error:', error.message);
+								returnData.push({
+									success: false,
+									isWhatsAppNumber: false,
+									error: error.message,
+									...(error.response?.body || {}),
+								} as IDataObject);
+							}
+						}
 					}
 				}
 			} catch (error) {

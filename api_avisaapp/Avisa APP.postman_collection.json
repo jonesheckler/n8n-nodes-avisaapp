@@ -457,14 +457,14 @@
 									}
 								},
 								"url": {
-									"raw": "{{baseurl}}/v2/actions/checknumber",
+									"raw": "{{baseurl}}/v2/actions/checknumberinternational",
 									"host": [
 										"{{baseurl}}"
 									],
 									"path": [
 										"v2",
 										"actions",
-										"checknumber"
+										"checknumberinternational"
 									]
 								},
 								"description": "Send message to someone."
