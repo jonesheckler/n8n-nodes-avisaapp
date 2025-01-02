@@ -4,6 +4,7 @@ import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
+	NodeOperationError,
 } from 'n8n-workflow';
 
 export class AvisaApp implements INodeType {
@@ -75,6 +76,12 @@ export class AvisaApp implements INodeType {
 						description: 'Send an image',
 						action: 'Send an image',
 					},
+					{
+						name: 'Send Media',
+						value: 'sendMedia',
+						description: 'Send a media file (image/video/audio)',
+						action: 'Send a media file',
+					},
 				],
 				default: 'sendText',
 			},
@@ -102,7 +109,7 @@ export class AvisaApp implements INodeType {
 			},
 			{
 				displayName: 'Phone Number',
-				name: 'numero',
+				name: 'phoneNumber',
 				type: 'string',
 				default: '',
 				required: true,
@@ -115,14 +122,15 @@ export class AvisaApp implements INodeType {
 							'sendText',
 							'sendDocument',
 							'sendImage',
+							'sendMedia',
 						],
 					},
 				},
-				description: 'Phone number in international format',
+				description: 'Phone number in international format or JID',
 			},
 			{
 				displayName: 'Phone Number',
-				name: 'numero',
+				name: 'phoneNumber',
 				type: 'string',
 				default: '',
 				required: true,
@@ -160,6 +168,11 @@ export class AvisaApp implements INodeType {
 				displayName: 'Document',
 				name: 'document',
 				type: 'string',
+				typeOptions: {
+					alwaysOpenEditWindow: true,
+					rows: 4,
+					maxDataSize: 100 * 1024 * 1024, // 100MB limit
+				},
 				default: '',
 				required: true,
 				displayOptions: {
@@ -172,7 +185,7 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Document encoded in Base64',
+				description: 'Document encoded in Base64 or binary file data',
 			},
 			{
 				displayName: 'File Name',
@@ -208,12 +221,17 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Caption for document or image',
+				description: 'Caption for media file',
 			},
 			{
 				displayName: 'Image',
 				name: 'image',
 				type: 'string',
+				typeOptions: {
+					alwaysOpenEditWindow: true,
+					rows: 4,
+					maxDataSize: 100 * 1024 * 1024, // 100MB limit
+				},
 				default: '',
 				required: true,
 				displayOptions: {
@@ -226,7 +244,96 @@ export class AvisaApp implements INodeType {
 						],
 					},
 				},
-				description: 'Image encoded in Base64',
+				description: 'Image encoded in Base64 or binary file data',
+			},
+			{
+				displayName: 'File URL',
+				name: 'urlFile',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'message',
+						],
+						operation: [
+							'sendMedia',
+						],
+					},
+				},
+				description: 'URL of the file to send',
+			},
+			{
+				displayName: 'Type',
+				name: 'type',
+				type: 'options',
+				options: [
+					{
+						name: 'Image',
+						value: 'image',
+					},
+					{
+						name: 'Video',
+						value: 'video',
+					},
+					{
+						name: 'Audio',
+						value: 'audio',
+					},
+					{
+						name: 'Document',
+						value: 'document',
+					},
+				],
+				default: 'image',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'message',
+						],
+						operation: [
+							'sendMedia',
+						],
+					},
+				},
+				description: 'Type of media being sent',
+			},
+			{
+				displayName: 'File Name',
+				name: 'fileName',
+				type: 'string',
+				default: '',
+				required: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'message',
+						],
+						operation: [
+							'sendMedia',
+						],
+					},
+				},
+				description: 'Name of the file to be sent',
+			},
+			{
+				displayName: 'Message',
+				name: 'message',
+				type: 'string',
+				default: '',
+				displayOptions: {
+					show: {
+						resource: [
+							'message',
+						],
+						operation: [
+							'sendMedia',
+						],
+					},
+				},
+				description: 'Message text to send with the media',
 			},
 		],
 	};
@@ -248,11 +355,11 @@ export class AvisaApp implements INodeType {
 			try {
 				if (resource === 'message') {
 					if (operation === 'sendText') {
-						const numero = this.getNodeParameter('numero', i) as string;
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
 						const mensagem = this.getNodeParameter('mensagem', i) as string;
 
 						const body = {
-							numero,
+							phoneNumber,
 							mensagem,
 						};
 
@@ -279,13 +386,18 @@ export class AvisaApp implements INodeType {
 						returnData.push(response as IDataObject);
 					}
 					else if (operation === 'sendDocument') {
-						const numero = this.getNodeParameter('numero', i) as string;
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
 						const document = this.getNodeParameter('document', i) as string;
 						const fileName = this.getNodeParameter('fileName', i) as string;
 						const caption = this.getNodeParameter('caption', i) as string;
 
+						// Validate document size
+						if (Buffer.from(document, 'base64').length > 100 * 1024 * 1024) {
+							throw new NodeOperationError(this.getNode(), 'Document size exceeds 100MB limit', { itemIndex: i });
+						}
+
 						const body = {
-							numero,
+							phoneNumber,
 							document,
 							fileName,
 							caption,
@@ -293,11 +405,13 @@ export class AvisaApp implements INodeType {
 
 						const url = `${baseUrl}/actions/sendDocument`;
 						console.log('Making request to:', url);
-						console.log('Request body:', JSON.stringify(body));
+						console.log('Request body:', {
+							...body,
+							document: body.document.substring(0, 50) + '... [content truncated]'
+						});
 
 						// Format the authorization header
 						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
-						console.log('Authorization header:', authHeader);
 
 						const response = await this.helpers.httpRequest({
 							method: 'POST',
@@ -307,30 +421,37 @@ export class AvisaApp implements INodeType {
 								'Authorization': authHeader,
 								'Content-Type': 'application/json',
 							},
+							timeout: 300000, // 5 minutes timeout for large files
 						});
 
 						console.log('Response:', JSON.stringify(response));
-
 						returnData.push(response as IDataObject);
 					}
 					else if (operation === 'sendImage') {
-						const numero = this.getNodeParameter('numero', i) as string;
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
 						const image = this.getNodeParameter('image', i) as string;
 						const caption = this.getNodeParameter('caption', i) as string;
 
+						// Validate image size
+						if (Buffer.from(image, 'base64').length > 100 * 1024 * 1024) {
+							throw new NodeOperationError(this.getNode(), 'Image size exceeds 100MB limit', { itemIndex: i });
+						}
+
 						const body = {
-							numero,
+							phoneNumber,
 							image,
 							caption,
 						};
 
 						const url = `${baseUrl}/actions/sendImage`;
 						console.log('Making request to:', url);
-						console.log('Request body:', JSON.stringify(body));
+						console.log('Request body:', {
+							...body,
+							image: body.image.substring(0, 50) + '... [content truncated]'
+						});
 
 						// Format the authorization header
 						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
-						console.log('Authorization header:', authHeader);
 
 						const response = await this.helpers.httpRequest({
 							method: 'POST',
@@ -340,19 +461,55 @@ export class AvisaApp implements INodeType {
 								'Authorization': authHeader,
 								'Content-Type': 'application/json',
 							},
+							timeout: 300000, // 5 minutes timeout for large files
 						});
 
 						console.log('Response:', JSON.stringify(response));
+						returnData.push(response as IDataObject);
+					}
+					else if (operation === 'sendMedia') {
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
+						const urlFile = this.getNodeParameter('urlFile', i) as string;
+						const type = this.getNodeParameter('type', i) as string;
+						const fileName = this.getNodeParameter('fileName', i) as string;
+						const message = this.getNodeParameter('message', i) as string;
 
+						const body = {
+							numero: phoneNumber, // API espera 'numero'
+							urlFile,
+							type,
+							fileName,
+							mensagem: message, // API espera 'mensagem'
+						};
+
+						const url = `${baseUrl}/actions/sendMedia`;
+						console.log('Making request to:', url);
+						console.log('Request body:', body);
+
+						// Format the authorization header
+						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+
+						const response = await this.helpers.httpRequest({
+							method: 'POST',
+							url,
+							body,
+							headers: {
+								'Authorization': authHeader,
+								'Content-Type': 'application/json',
+							},
+							timeout: 300000, // 5 minutes timeout for large files
+						});
+
+						console.log('Response:', JSON.stringify(response));
 						returnData.push(response as IDataObject);
 					}
 				}
 				else if (resource === 'contact') {
 					if (operation === 'checkNumber') {
-						const numero = this.getNodeParameter('numero', i) as string;
+						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
 
 						const body = {
-							numero,
+							numero: phoneNumber, // API espera 'numero'
 						};
 
 						const url = `${baseUrl}/actions/checknumberinternational`;
