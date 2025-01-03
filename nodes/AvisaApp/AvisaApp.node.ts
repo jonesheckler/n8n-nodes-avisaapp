@@ -42,6 +42,11 @@ export class AvisaApp implements INodeType {
 						name: 'Contact',
 						value: 'contact',
 					},
+					{
+						name: 'Instance',
+						value: 'instance',
+						description: 'Instance operations',
+					},
 				],
 				default: 'message',
 			},
@@ -106,6 +111,28 @@ export class AvisaApp implements INodeType {
 					},
 				],
 				default: 'checkNumber',
+			},
+			{
+				displayName: 'Operation',
+				name: 'operation',
+				type: 'options',
+				noDataExpression: true,
+				displayOptions: {
+					show: {
+						resource: [
+							'instance',
+						],
+					},
+				},
+				options: [
+					{
+						name: 'Check Status',
+						value: 'checkStatus',
+						description: 'Check if instance is connected',
+						action: 'Check if instance is connected',
+					},
+				],
+				default: 'checkStatus',
 			},
 			{
 				displayName: 'Phone Number',
@@ -359,7 +386,7 @@ export class AvisaApp implements INodeType {
 						const mensagem = this.getNodeParameter('mensagem', i) as string;
 
 						const body = {
-							phoneNumber,
+							numero: phoneNumber, // API espera 'numero'
 							mensagem,
 						};
 
@@ -558,6 +585,27 @@ export class AvisaApp implements INodeType {
 								} as IDataObject);
 							}
 						}
+					}
+				}
+				else if (resource === 'instance') {
+					if (operation === 'checkStatus') {
+						const url = `${baseUrl}/instance/status`;
+						console.log('Making request to:', url);
+
+						// Format the authorization header
+						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+
+						const response = await this.helpers.httpRequest({
+							method: 'GET',
+							url,
+							headers: {
+								'Authorization': authHeader,
+								'Content-Type': 'application/json',
+							},
+						});
+
+						console.log('Response:', JSON.stringify(response));
+						returnData.push(response as IDataObject);
 					}
 				}
 			} catch (error) {
