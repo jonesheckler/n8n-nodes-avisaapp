@@ -1,10 +1,29 @@
 ![Banner image](https://user-images.githubusercontent.com/10284570/173569848-c624317f-42b1-45a6-ab09-f0ea3c247648.png)
 
-# n8n-nodes-starter
+# n8n-nodes-avisaapp
 
-This repo contains example nodes to help you get started building your own custom integrations for [n8n](n8n.io). It includes the node linter and other dependencies.
+Este é um nó personalizado para n8n que permite integração com o [Avisa App](https://www.avisaapp.com.br), uma plataforma de comunicação via WhatsApp para envio de mensagens, documentos e mídia.
 
-To make your custom node available to the community, you must create it as an npm package, and [submit it to the npm registry](https://docs.npmjs.com/packages-and-modules/contributing-packages-to-the-registry).
+## Funcionalidades
+
+- Envio de mensagens de texto
+- Envio de documentos em base64
+- Envio de imagens em base64
+- Envio de mídia (imagem/vídeo/áudio) via URL
+- Verificação de status da instância
+- Obtenção de QR Code para conexão
+
+## Sobre o Avisa App
+
+O Avisa App é uma plataforma que permite o envio de notificações agendadas e simples via WhatsApp. Para mais informações e para obter sua chave de API, visite [https://www.avisaapp.com.br](https://www.avisaapp.com.br).
+
+## Instalação
+
+Para usar este nó, você precisará:
+
+1. Ter uma conta no [Avisa App](https://www.avisaapp.com.br)
+2. Obter sua chave de API no painel do Avisa App
+3. Instalar este pacote no seu n8n
 
 ## Prerequisites
 

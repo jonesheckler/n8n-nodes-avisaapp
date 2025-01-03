@@ -72,20 +72,20 @@ export class AvisaApp implements INodeType {
 					{
 						name: 'Send Document',
 						value: 'sendDocument',
-						description: 'Send a document',
-						action: 'Send a document',
+						description: 'Send a document base64',
+						action: 'Send a document base64',
 					},
 					{
 						name: 'Send Image',
 						value: 'sendImage',
-						description: 'Send an image',
-						action: 'Send an image',
+						description: 'Send an image base64',
+						action: 'Send an image base64',
 					},
 					{
 						name: 'Send Media',
 						value: 'sendMedia',
 						description: 'Send a media file (image/video/audio)',
-						action: 'Send a media file',
+						action: 'Send a media file url',
 					},
 				],
 				default: 'sendText',
@@ -130,6 +130,12 @@ export class AvisaApp implements INodeType {
 						value: 'checkStatus',
 						description: 'Check if instance is connected',
 						action: 'Check if instance is connected',
+					},
+					{
+						name: 'Get QR Code',
+						value: 'getQR',
+						description: 'Get QR code for scanning',
+						action: 'Get QR code for scanning',
 					},
 				],
 				default: 'checkStatus',
@@ -427,11 +433,6 @@ export class AvisaApp implements INodeType {
 						const fileName = this.getNodeParameter('fileName', i) as string;
 						const caption = this.getNodeParameter('caption', i) as string;
 
-						// Validate document size
-						if (Buffer.from(document, 'base64').length > 100 * 1024 * 1024) {
-							throw new NodeOperationError(this.getNode(), 'Document size exceeds 100MB limit', { itemIndex: i });
-						}
-
 						const body = {
 							number: phoneNumber,
 							document,
@@ -446,22 +447,36 @@ export class AvisaApp implements INodeType {
 							document: body.document.substring(0, 50) + '... [content truncated]'
 						});
 
-						// Format the authorization header
-						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
 
-						const response = await this.helpers.httpRequest({
-							method: 'POST',
-							url,
-							body,
-							headers: {
-								'Authorization': authHeader,
-								'Content-Type': 'application/json',
-							},
-							timeout: 300000, // 5 minutes timeout for large files
-						});
+							const response = await this.helpers.httpRequest({
+								method: 'POST',
+								url,
+								body,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+								timeout: 300000, // 5 minutes timeout for large files
+							});
 
-						console.log('Response:', JSON.stringify(response));
-						returnData.push(response as IDataObject);
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							console.log('Error response:', JSON.stringify(error.response?.data));
+
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								const errorMessage = error.response.data?.message || error.response.data?.error || error.message;
+								returnData.push({
+									success: false,
+									error: errorMessage,
+								});
+							} else {
+								throw error;
+							}
+						}
 					}
 					else if (operation === 'sendImage') {
 						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
@@ -486,22 +501,33 @@ export class AvisaApp implements INodeType {
 							image: body.image.substring(0, 50) + '... [content truncated]'
 						});
 
-						// Format the authorization header
-						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
 
-						const response = await this.helpers.httpRequest({
-							method: 'POST',
-							url,
-							body,
-							headers: {
-								'Authorization': authHeader,
-								'Content-Type': 'application/json',
-							},
-							timeout: 300000, // 5 minutes timeout for large files
-						});
+							const response = await this.helpers.httpRequest({
+								method: 'POST',
+								url,
+								body,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+								timeout: 300000, // 5 minutes timeout for large files
+							});
 
-						console.log('Response:', JSON.stringify(response));
-						returnData.push(response as IDataObject);
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								returnData.push({
+									success: false,
+									error: error.response.data.error || error.message,
+								});
+							} else {
+								throw error;
+							}
+						}
 					}
 					else if (operation === 'sendMedia') {
 						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
@@ -522,22 +548,36 @@ export class AvisaApp implements INodeType {
 						console.log('Making request to:', url);
 						console.log('Request body:', body);
 
-						// Format the authorization header
-						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
 
-						const response = await this.helpers.httpRequest({
-							method: 'POST',
-							url,
-							body,
-							headers: {
-								'Authorization': authHeader,
-								'Content-Type': 'application/json',
-							},
-							timeout: 300000, // 5 minutes timeout for large files
-						});
+							const response = await this.helpers.httpRequest({
+								method: 'POST',
+								url,
+								body,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+								timeout: 300000, // 5 minutes timeout for large files
+							});
 
-						console.log('Response:', JSON.stringify(response));
-						returnData.push(response as IDataObject);
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							console.log('Error response:', JSON.stringify(error.response?.data));
+
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								const errorMessage = error.response.data?.message || error.response.data?.error || error.message;
+								returnData.push({
+									success: false,
+									error: errorMessage,
+								});
+							} else {
+								throw error;
+							}
+						}
 					}
 				}
 				else if (resource === 'contact') {
@@ -601,20 +641,66 @@ export class AvisaApp implements INodeType {
 						const url = `${baseUrl}/instance/status`;
 						console.log('Making request to:', url);
 
-						// Format the authorization header
-						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
 
-						const response = await this.helpers.httpRequest({
-							method: 'GET',
-							url,
-							headers: {
-								'Authorization': authHeader,
-								'Content-Type': 'application/json',
-							},
-						});
+							const response = await this.helpers.httpRequest({
+								method: 'GET',
+								url,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+							});
 
-						console.log('Response:', JSON.stringify(response));
-						returnData.push(response as IDataObject);
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							console.log('Error response:', JSON.stringify(error.response?.data));
+
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								const errorMessage = error.response.data?.message || error.response.data?.error || error.message;
+								returnData.push({
+									success: false,
+									error: errorMessage,
+								});
+							} else {
+								throw error;
+							}
+						}
+					} else if (operation === 'getQR') {
+						const url = `${baseUrl}/instance/qr`;
+						console.log('Making request to:', url);
+
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
+
+							const response = await this.helpers.httpRequest({
+								method: 'GET',
+								url,
+								headers: {
+									'Authorization': authHeader,
+									'Accept': 'application/json',
+								},
+							});
+
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							console.log('Error response:', JSON.stringify(error.response?.data));
+
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								const errorMessage = error.response.data?.message || error.response.data?.error || error.message;
+								returnData.push({
+									success: false,
+									error: errorMessage,
+								});
+							} else {
+								throw error;
+							}
+						}
 					}
 				}
 			} catch (error) {
