@@ -424,7 +424,7 @@ export class AvisaApp implements INodeType {
 						}
 
 						const body = {
-							phoneNumber,
+							number: phoneNumber,
 							document,
 							fileName,
 							caption,
@@ -465,7 +465,7 @@ export class AvisaApp implements INodeType {
 						}
 
 						const body = {
-							phoneNumber,
+							number: phoneNumber,
 							image,
 							caption,
 						};
