@@ -386,31 +386,40 @@ export class AvisaApp implements INodeType {
 						const mensagem = this.getNodeParameter('mensagem', i) as string;
 
 						const body = {
-							numero: phoneNumber, // API espera 'numero'
+							numero: phoneNumber,
 							mensagem,
 						};
 
 						const url = `${baseUrl}/actions/sendMessage`;
 						console.log('Making request to:', url);
-						console.log('Request body:', JSON.stringify(body));
+						console.log('Request body:', body);
 
-						// Format the authorization header
-						const authHeader = `Bearer ${credentials.apiToken.trim()}`;
-						console.log('Authorization header:', authHeader);
+						try {
+							// Format the authorization header
+							const authHeader = `Bearer ${credentials.apiToken.trim()}`;
 
-						const response = await this.helpers.httpRequest({
-							method: 'POST',
-							url,
-							body,
-							headers: {
-								'Authorization': authHeader,
-								'Content-Type': 'application/json',
-							},
-						});
+							const response = await this.helpers.httpRequest({
+								method: 'POST',
+								url,
+								body,
+								headers: {
+									'Authorization': authHeader,
+									'Content-Type': 'application/json',
+								},
+							});
 
-						console.log('Response:', JSON.stringify(response));
-
-						returnData.push(response as IDataObject);
+							console.log('Response:', JSON.stringify(response));
+							returnData.push(response as IDataObject);
+						} catch (error) {
+							if (error.response && (error.response.status === 400 || error.response.status === 401)) {
+								returnData.push({
+									success: false,
+									error: error.response.data.error || error.message,
+								});
+							} else {
+								throw error;
+							}
+						}
 					}
 					else if (operation === 'sendDocument') {
 						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
@@ -502,11 +511,11 @@ export class AvisaApp implements INodeType {
 						const message = this.getNodeParameter('message', i) as string;
 
 						const body = {
-							numero: phoneNumber, // API espera 'numero'
+							numero: phoneNumber,
 							urlFile,
 							type,
 							fileName,
-							mensagem: message, // API espera 'mensagem'
+							mensagem: message,
 						};
 
 						const url = `${baseUrl}/actions/sendMedia`;
@@ -536,7 +545,7 @@ export class AvisaApp implements INodeType {
 						const phoneNumber = this.getNodeParameter('phoneNumber', i) as string;
 
 						const body = {
-							numero: phoneNumber, // API espera 'numero'
+							numero: phoneNumber,
 						};
 
 						const url = `${baseUrl}/actions/checknumberinternational`;
@@ -569,7 +578,7 @@ export class AvisaApp implements INodeType {
 							if (error.response && error.response.statusCode === 400) {
 								console.log('Invalid WhatsApp number response:', JSON.stringify(error.response.body));
 								returnData.push({
-									success: true, // We mark as success because this is an expected response
+									success: true,
 									isWhatsAppNumber: false,
 									statusCode: 400,
 									...error.response.body,
